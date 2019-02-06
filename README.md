@@ -36,9 +36,9 @@ std::Option<float> divide(float numerator, float denominator) {
 int main() {
   std::Option<float> d = divide(10.0, 2);
   if (d == std::None)
-    std::cout << "Return None!" << std::endl;
+    std::cout << "Cannot divide by 0" << std::endl;
   else
-    std::cout << "Return:" << d << std::endl;
+    std::cout << "Result: " << d << std::endl;
 }
 ```
 
@@ -48,8 +48,8 @@ Compile:
 g++ -o sample sample.cpp -Isrc
 ```
 
-Result:
+Output:
 
 ```
-Return:5
+Result: 5
 ```
