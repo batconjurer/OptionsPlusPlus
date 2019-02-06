@@ -3,7 +3,7 @@
 The point of this repository is to contain header files that implement memory safe alternatives
 for certain objects (typically nullable) currently standard in C++. Apart from memory safety, these objects aim to provide protection against Segmentation Faults and to provide more accurate exceptions and error message to aid developers.
 
-The current aims of are to implement a syntax to allow None-type objects for any C++ object as well as safe handling of null pointers. 
+The current aims of are to implement a syntax to allow None-type objects for any C++ object as well as safe handling of null pointers.
 
 ## Options
 
@@ -19,3 +19,37 @@ An option can be checked to be None and if not, its value retrieved. A None type
 Options belong to the ``Options'' namespace and are implemented in Options.h
 
 ### Example uses
+
+```cpp
+#include <iostream>
+#include "option.h"
+
+std::Option<float> divide(float numerator, float denominator) {
+  if (denominator == 0.0) {
+    return std::None;
+  } else {
+    std::Option<float> result = numerator / denominator;
+    return result;
+  }
+}
+
+int main() {
+  std::Option<float> d = divide(10.0, 2);
+  if (d == std::None)
+    std::cout << "Return None!" << std::endl;
+  else
+    std::cout << "Return:" << d << std::endl;
+}
+```
+
+Compile:
+
+```
+g++ -o sample sample.cpp -Isrc
+```
+
+Result:
+
+```
+Return:5
+```
