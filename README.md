@@ -44,7 +44,7 @@ int main() {
 
 Compile:
 
-```
+```bash
 g++ -o sample sample.cpp -Isrc
 ```
 
@@ -52,10 +52,11 @@ Output:
 
 ```
 Result: 5
+```
 
 Declaring and accessing an Option of type int.
 
-```
+```cpp
 Options::Option<int> int_option = 3; // A normal integer
 Options::Options<int> int_none = Options::None; // A None-type object for ints.
 
@@ -66,7 +67,7 @@ int y = int_none.get(); // Raises an exception stating None types have no value
 
 In the above example, one should try to avoid accessing the value of an Option unless it is known not to be None. The following example demonstrates this as well as using a None value as a default argument type. It is contrasted with the more traditional approach of null pointers.
 
-```
+```cpp
 // Using Options
 void print_name(std::string first_name, std::string last_name, Options::Option<std::string> middle_name = Options::None) {
 	if (middle_name != Options::None) {
@@ -89,8 +90,7 @@ void print_name(std::string first_name, std::string last_name, std::string* midd
 
 Some additional uses of note:
 
-```
-
+```cpp
 Options::Option<MyStruct> very_big_struct1(input_struct); // Normal initialization
 Options::Option<MyStruct> very_big_struct2(*input_struct); // Same as line above, isn't that clever?
 
