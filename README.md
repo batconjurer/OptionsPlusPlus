@@ -3,7 +3,7 @@
 The point of this repository is to contain header files that implement memory safe alternatives
 for certain objects (typically nullable) currently standard in C++. Apart from memory safety, these objects aim to provide protection against Segmentation Faults and to provide more accurate exceptions and error message to aid developers.
 
-The current aims of are to implement a syntax to allow None-type objects for any C++ object as well as safe handling of null pointers. 
+The current aims of are to implement a syntax to allow None-type objects for any C++ object as well as safe handling of null pointers.
 
 ## Options
 
@@ -18,10 +18,45 @@ An option can be checked to be None and if not, its value retrieved. A None type
 
 Options belong to the "Options" namespace and are implemented in Options.h
 
-### Example use
-Declaring and accessing an Option of type int.
+### Example uses
+
+```cpp
+#include <iostream>
+#include "option.h"
+
+std::Option<float> divide(float numerator, float denominator) {
+  if (denominator == 0.0) {
+    return std::None;
+  } else {
+    std::Option<float> result = numerator / denominator;
+    return result;
+  }
+}
+
+int main() {
+  std::Option<float> d = divide(10.0, 2);
+  if (d == std::None)
+    std::cout << "Cannot divide by 0" << std::endl;
+  else
+    std::cout << "Result: " << d << std::endl;
+}
+```
+
+Compile:
+
+```bash
+g++ -o sample sample.cpp -Isrc
+```
+
+Output:
 
 ```
+Result: 5
+```
+
+Declaring and accessing an Option of type int.
+
+```cpp
 Options::Option<int> int_option = 3; // A normal integer
 Options::Options<int> int_none = Options::None; // A None-type object for ints.
 
@@ -32,7 +67,7 @@ int y = int_none.get(); // Raises an exception stating None types have no value
 
 In the above example, one should try to avoid accessing the value of an Option unless it is known not to be None. The following example demonstrates this as well as using a None value as a default argument type. It is contrasted with the more traditional approach of null pointers.
 
-```
+```cpp
 // Using Options
 void print_name(std::string first_name, std::string last_name, Options::Option<std::string> middle_name = Options::None) {
 	if (middle_name != Options::None) {
@@ -55,8 +90,7 @@ void print_name(std::string first_name, std::string last_name, std::string* midd
 
 Some additional uses of note:
 
-```
-
+```cpp
 Options::Option<MyStruct> very_big_struct1(input_struct); // Normal initialization
 Options::Option<MyStruct> very_big_struct2(*input_struct); // Same as line above, isn't that clever?
 
@@ -78,5 +112,4 @@ x = null_struct1 == Options::None; // x is now true
 x = null_struct1 == Options::Some; // x is now false
 
 Options::Options<MyStruct> null_struct(Options::Some); // can't make a non-None object without a value, raises exception
-
 ```
