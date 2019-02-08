@@ -5,7 +5,7 @@ An Option is a template class, that stores objects but also safely allows a None
 behaviour if no object is specified.
  */
 #include <stdexcept>
-
+#include <iostream>
 namespace std {
 
   /*
@@ -22,9 +22,9 @@ namespace std {
   public:
     Option();
     Option(const opt_val& other);
-    Option(Type value);
     Option(Type &value);
     Option(Type *value);
+    Option(const Option& other);
     Type get() const;
     bool operator==(const Option &rhs_opt);
     bool operator!=(const Option &rhs_opt);
@@ -37,26 +37,10 @@ namespace std {
   };
 
   template <class Type>
-  Option<Type>& Option<Type>::operator=(const Option<Type>& other) {
-    return Option<Type>(other.val);
-  }
-
-  template <class Type>
-  Option<Type>& Option<Type>::operator=(const opt_val& other) {
-    if (other == Some)
-      throw std::runtime_error("Cannot set type Option to Some explicilty; must be intialized with an object instance");
-    this->valid = None;
-    this->val = nullptr;
-    return *this;
-  }
-
-  template <class Type>
-  Option<Type>& Option<Type>::operator=(const Type& other) {
-    this->valid = Some;
-    if (this->val)
-      delete this->val;
-    this->val = new Type(other);
-    return *this;
+  bool Option<Type>::is_none() const {
+    if (valid == None)
+      return true;
+    return false;
   }
 
   template <class Type>
@@ -73,17 +57,13 @@ namespace std {
     val = nullptr;
   }
 
+
   template <class Type>
   Option<Type>::Option(Type& value) {
     valid = Some;
     val = &value;
   }
 
-  template <class Type>
-  Option<Type>::Option(Type value) {
-    valid = Some;
-    val = new Type(value);
-  }
 
   template <class Type>
   Option<Type>::Option(Type* value) {
@@ -96,13 +76,13 @@ namespace std {
   }
 
   template <class Type>
-  bool Option<Type>::is_none() const {
-    if (valid == None)
-      return true;
-    return false;
+  Option<Type>::Option(const Option<Type>& other){
+    this->valid = other.valid;
+    this->val = other.val;
   }
+  
 
-  // Warning! Not a safe method. Hence is static so not accessible from outside.
+  // Warning! Not a safe method. .
   template <class Type>
   Type Option<Type>::get() const {
     if (val == nullptr)
@@ -115,7 +95,7 @@ namespace std {
     if (this->is_none() && rhs_opt.is_none())
       return true;
     else if (!this->is_none() && !rhs_opt.is_none())
-      return this->get() == rhs_opt.get();
+      return this->val == rhs_opt.val;
     else
       return false;
   }
@@ -133,6 +113,27 @@ namespace std {
   template <class Type>
   bool Option<Type>::operator!=(const opt_val &val) {
     return !(this->valid == val);
+  }
+
+   template <class Type>
+  Option<Type>& Option<Type>::operator=(const Option<Type>& other) {
+    return Option<Type>(other.val);
+  }
+
+  template <class Type>
+  Option<Type>& Option<Type>::operator=(const opt_val& other) {
+    if (other == Some)
+      throw std::runtime_error("Cannot set type Option to Some explicilty; must be intialized with an object instance");
+    this->valid = None;
+    this->val = nullptr;
+    return *this;
+  }
+
+  template <class Type>
+  Option<Type>& Option<Type>::operator=(const Type& other) {
+    this->valid = Some;
+    this->val = other;
+    return *this;
   }
 
   template <class T>
