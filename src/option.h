@@ -50,7 +50,7 @@ namespace std {
   }
 
   template <class Type>
-  Option<Type>::Option(const opt_val& other) {
+  Option<Type>::Option(const opt_val other) {
     if (other == Some)
       throw std::runtime_error("Cannot set type Option to Some explicilty; must be intialized with an object instance");
     valid = None;
