@@ -21,7 +21,7 @@ namespace std {
 
   public:
     Option();
-    Option(const opt_val& other);
+    Option(const opt_val other);
     Option(Type value);
     Option(Type &value);
     Option(Type *value);
