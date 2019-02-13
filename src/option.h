@@ -4,6 +4,8 @@ Inspired by the Option type in Rust, we implement a C++ version.
 An Option is a template class, that stores objects but also safely allows a None-like
 behaviour if no object is specified.
  */
+#ifndef OPTIONS_H
+#define OPTIONS_H
 #include <stdexcept>
 #include <iostream>
 namespace std {
@@ -16,13 +18,13 @@ namespace std {
   template <class Type>
   class Option {
     opt_val valid;
-    Type* val;
+    Type *val;
     bool is_none() const;
 
   public:
     Option();
     Option(const opt_val& other);
-    Option(Type &value);
+    Option(Type value);
     Option(Type *value);
     Option(const Option& other);
     Type get() const;
@@ -32,7 +34,7 @@ namespace std {
     bool operator!=(const opt_val &val);
     Option<Type>& operator=(const Option<Type>& other);
     Option<Type>& operator=(const opt_val& other);
-    Option<Type>& operator=(const Type& other);
+    Option<Type>& operator=(Type& other);
     template <class T> friend ostream& operator<<(ostream& out, const Option<T>& opt);
   };
 
@@ -50,7 +52,7 @@ namespace std {
   }
 
   template <class Type>
-  Option<Type>::Option(const opt_val other) {
+  Option<Type>::Option(const opt_val& other) {
     if (other == Some)
       throw std::runtime_error("Cannot set type Option to Some explicilty; must be intialized with an object instance");
     valid = None;
@@ -59,7 +61,7 @@ namespace std {
 
 
   template <class Type>
-  Option<Type>::Option(Type& value) {
+  Option<Type>::Option(Type value) {
     valid = Some;
     val = &value;
   }
@@ -130,9 +132,9 @@ namespace std {
   }
 
   template <class Type>
-  Option<Type>& Option<Type>::operator=(const Type& other) {
+  Option<Type>& Option<Type>::operator=(Type& other) {
     this->valid = Some;
-    this->val = other;
+    this->val = &other;
     return *this;
   }
 
@@ -157,14 +159,15 @@ namespace RustLike {
   template <class Type>
   class Option {
     opt_val valid;
-    Type* val;
+    Type val;
     bool is_none() const;
 
   public:
     Option();
-    Option(const opt_val& other);
+    Option(const opt_val other);
     Option(Type &value);
     Option(Type *value);
+//    Option(Type &&val)
     Option(const Option& other);
     Type get() const;
     bool operator==(const Option &rhs_opt);
@@ -174,7 +177,7 @@ namespace RustLike {
     Option<Type>& operator=(const Option<Type>& other);
     Option<Type>& operator=(const opt_val& other);
     Option<Type>& operator=(const Type& other);
-    template <class T> friend ostream& operator<<(ostream& out, const Option<T>& opt);
+    template <class T> friend std::ostream& operator<<(std::ostream& out, const Option<T>& opt);
   };
 
   template <class Type>
@@ -202,7 +205,7 @@ namespace RustLike {
   template <class Type>
   Option<Type>::Option(Type& value) {
     valid = Some;
-    val = &value;
+    val = std::move(value);
   }
 
 
@@ -213,7 +216,7 @@ namespace RustLike {
     } else {
       valid = Some;
     }
-    val = value;
+    val = std::move(*value);
   }
 
   template <class Type>
@@ -278,7 +281,7 @@ namespace RustLike {
   }
 
   template <class T>
-  ostream& operator<<(ostream& out, const Option<T>& opt) {
+  std::ostream& operator<<(std::ostream& out, const Option<T>& opt) {
     if (opt.val == nullptr)
       out << "";
     else
@@ -287,3 +290,4 @@ namespace RustLike {
   }
 
 };
+#endif
