@@ -80,7 +80,7 @@ namespace std {
     this->valid = other.valid;
     this->val = other.val;
   }
-  
+
 
   // Warning! Not a safe method. .
   template <class Type>
@@ -145,4 +145,35 @@ namespace std {
     return out;
   }
 
+
+  // traits
+  template <typename T>
+  struct is_option {
+    static const bool value = false;
+  };
+
+  template <typename T>
+  struct is_option<Option<T>> {
+    static const bool value = true;
+  };
+
+  template <typename T>
+  struct is_option<Option<T*>> {
+    static const bool value = true;
+  };
 };
+
+// extra functions for validation
+template <typename T>
+bool is_some(T cls) {
+  if (std::is_option<T>::value && cls != std::None)
+    return true;
+  return false;
+}
+
+template <typename T>
+bool is_none(T cls) {
+  if (!std::is_option<T>::value || cls == std::None)
+    return true;
+  return false;
+}
